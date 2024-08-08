@@ -1,6 +1,7 @@
 #include    <stdlib.h>
 #include    <stdio.h>
 #include    <fcntl.h>
+#include    <unistd.h>
 #include    "libmlx/mlx.h"
 #include    "../get_next_line/get_next_line.h"
 
@@ -29,7 +30,7 @@ typedef struct s_game
     int     player_y;
 }   t_game;
 
-int close(int keycode, t_game *game)
+int close_window(int keycode, t_game *game)
 {
     if (keycode == 65307)
         mlx_destroy_window(game->mlx, game->win);
@@ -93,38 +94,41 @@ void    game_map(t_game *game)
 
 }
 
-char    **read_map(t_game *game, char *str)
-{
-    int fd;
-    char *line;
-    char **map;
-    int height;
+// char    **read_map(t_game *game, char *str)
+// {
+//     int fd;
+//     char *line;
+//     char **map;
+//     int height;
     
-    fd = open(str, O_RDONLY);
-    if (fd == -1)
-        return (perror("You've got the wrong map"));
-    while (line = get_next_line(fd))
-    {
+//     fd = open(str, O_RDONLY);
+//     if (fd == -1)
+//         return (perror("You've got the wrong map"), 0);
+//     while (line = get_next_line(fd))
+//     {
 
-    }
-}
+//     }
+// }
 
 void    read_map(t_game *game, char *str)
 {
     int fd;
-    char *line;
     
     fd = open(str, O_RDONLY);
     if (fd == -1)
         return (perror("You've got the wrong map"));
     game->map->height = 0;
-    while (line = get_next_line(fd) != NULL)
+    while (get_next_line(fd) != NULL)
     {
-        game->map->map = (char **)realloc()
-        game->map->map[game->map->height] = line;
+        game->map->map = (char **)realloc(&game->map->map, game->map->height + 1);
+        game->map->map[game->map->height] = get_next_line(fd);
         game->map->height++;
     }
+    game->map->map[game->map->height] = NULL;
+    game->map->width = ft_strlen(game->map->map[0]);
+    close (fd);
 }
+
 
 int main(int agrc, char **argv)
 {
@@ -139,7 +143,7 @@ int main(int agrc, char **argv)
     game_image(game);
     game->win = mlx_new_window(game->mlx, game->map->width * 20, game->map->height * 20, "so fast");
     //render map
-    mlx_hook(game->win, 2, 1L<<0, close, game);
+    mlx_hook(game->win, 2, 1L<<0, close_window, game);
     mlx_hook(game->win, 17, 1L<<5, close_x, game);
     mlx_loop(game->mlx);
     // free game, map, game data
