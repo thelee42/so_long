@@ -4,8 +4,8 @@
 #include    <unistd.h>
 #include    "libmlx/mlx.h"
 #include    "get_next_line/get_next_line.h"
-#include    "get_next_line/get_next_line.h"
-
+#include    "libft/libft.h"
+/*
 int	ft_strlen(char *str)
 {
 	int	i;
@@ -213,7 +213,7 @@ char	**ft_split(char const *s, char c)
 	dest = copy(countword, dest, s, c);
 	return (dest);
 }
-
+*/
 
 // cc so_long.c -Llibmlx -lmlx -lX11 -lXext
 // cc so_long.c -Llibmlx -lmlx -framework OpenGL -framework AppKit
@@ -408,6 +408,23 @@ void   check_map(char *str, t_map *map)
 // 	return (data);
 // }
 
+int	map_height(char const *s, char c)
+{
+	int	count;
+
+	count = 0;
+	while (*s)
+	{
+		while (*s == c)
+			s++;
+		if (*s)
+			count += 1;
+		while (*s && *s != c)
+			s++;
+	}
+	return (count);
+}
+
 char	*read_map(char *str)
 {
 	int		fd;
@@ -431,9 +448,9 @@ void	init_map(t_map *map, char *str)
 {
 	map = malloc(sizeof(t_map));
 	if (!map)
-        return (perror("Oops ! You've got the wrong map.."), NULL);
+        return (perror("Oops ! You've got the wrong map.."));
 	map->data = ft_split(read_map(str), '\n');
-	map->height = count(read_map(str), '\n');
+	map->height = map_height(read_map(str), '\n');
 	map->width = ft_strlen(map->data[0]);
 }
 
